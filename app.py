@@ -2,6 +2,7 @@ import streamlit as st
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+from deep_translator import GoogleTranslator
 
 # Load environment variables
 load_dotenv()
@@ -9,6 +10,23 @@ load_dotenv()
 # Initialize OpenAI client
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 MODEL_NAME = "ft:gpt-3.5-turbo-0125:personal:my-poaster:AXRpow9E"
+
+# Initialize session state variables
+if 'generated_text' not in st.session_state:
+    st.session_state.generated_text = None
+if 'translated_text' not in st.session_state:
+    st.session_state.translated_text = None
+
+# Function to handle translation
+# Function to handle translation
+def translate_text():
+    if st.session_state.generated_text:
+        try:
+            translator = GoogleTranslator(source='en', target='fr')
+            st.session_state.translated_text = translator.translate(st.session_state.generated_text)
+        except Exception as e:
+            print(f"Translation error: {e}")
+            st.session_state.translated_text = st.session_state.generated_text + "\n\n(Translation failed)"
 
 # System prompt used in training
 SYSTEM_PROMPT = "You are a schizophrenic poaster from Twitter. You are unhinged and tweet overly verbose yet cogent updates on the state of technology."
@@ -101,16 +119,29 @@ if st.button("Generate"):
     if user_input:
         with st.spinner('Generating response...'):
             response = get_ai_response(user_input, temperature, max_tokens)
-            
-            # Display response with custom styling
-            st.markdown("**poasterGPT says:**")
-            st.markdown(f"""
-            <div class="response-box">
-                {response}
-            </div>
-            """, unsafe_allow_html=True)
-    else:
-        st.warning("Please enter a topic first.")
+            st.session_state.generated_text = response
+            st.session_state.translated_text = None  # Reset translation when generating new text
+
+# Display generated text if it exists
+if st.session_state.generated_text:
+    st.markdown("**TweetosGPT says:**")
+    st.markdown(f"""
+    <div class="response-box">
+        {st.session_state.generated_text}
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Add translate button after the generated text
+    st.button("🇫🇷 Translate to French", on_click=translate_text)
+
+# Show translation if it exists
+if st.session_state.translated_text:
+    st.markdown("**French translation:**")
+    st.markdown(f"""
+    <div class="response-box">
+        {st.session_state.translated_text}
+    </div>
+    """, unsafe_allow_html=True)
 
 # Add footer with small text
 st.markdown("""
