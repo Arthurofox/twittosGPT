@@ -9,7 +9,7 @@ load_dotenv()
 
 # Initialize OpenAI client
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-MODEL_NAME = "ft:gpt-3.5-turbo-0125:personal:my-poaster:AXRpow9E"
+MODEL_NAME = "ft:gpt-4o-mini-2024-07-18:personal:my-poaster-v2:AoUBJiKP"
 
 # Initialize session state variables
 if 'generated_text' not in st.session_state:
