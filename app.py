@@ -7,8 +7,18 @@ from deep_translator import GoogleTranslator
 # Load environment variables
 load_dotenv()
 
+def get_secret(name: str) -> str | None:
+    """Read secrets from Streamlit Cloud first, then local environment variables."""
+    try:
+        if name in st.secrets:
+            return st.secrets[name]
+    except Exception:
+        pass
+    return os.getenv(name)
+
 # Initialize OpenAI client
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+OPENAI_API_KEY = get_secret('OPENAI_API_KEY')
+client = OpenAI(api_key=OPENAI_API_KEY)
 MODEL_NAME = "ft:gpt-4o-mini-2024-07-18:personal:my-poaster-v2:AoUBJiKP"
 
 # Initialize session state variables
