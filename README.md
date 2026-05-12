@@ -15,3 +15,6 @@ OPENAI_API_KEY = "sk-proj-your-key-here"
 ```
 
 Do not commit a real API key to this public repository.
+
+For local testing, copy `.env.example` to `.env` and replace the placeholder with
+your real key.

@@ -18,6 +18,10 @@ def get_secret(name: str) -> str | None:
 
 # Initialize OpenAI client
 OPENAI_API_KEY = get_secret('OPENAI_API_KEY')
+if not OPENAI_API_KEY:
+    st.error("Missing OPENAI_API_KEY. Add it to Streamlit secrets or a local .env file.")
+    st.stop()
+
 client = OpenAI(api_key=OPENAI_API_KEY)
 MODEL_NAME = "ft:gpt-4o-mini-2024-07-18:personal:my-poaster-v2:AoUBJiKP"
 
